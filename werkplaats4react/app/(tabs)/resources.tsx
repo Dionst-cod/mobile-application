@@ -125,7 +125,7 @@ const ResourcesScreen = () => {
         <Text style={styles.filterTitle}>Zoek bronnen</Text>
 
         <View style={styles.searchContain}>
-          <Ionicons name="seach" size={20} color="#666" style={styles.searchIcon} />
+          <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Zoek op titel, beschrijving of tags..."
