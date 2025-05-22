@@ -17,12 +17,24 @@ const DUMMY_RESOURCES = [
     rating: 4.8,
     ratingCount: 24,
   },
+  {
+    id: '2',
+    title: 'The one and only one runs',
+    description: 'where spongebob walks and runs',
+    type: 'video',
+    tags: ['react native', 'cartoon', 'mobile development'],
+    createdBy: 'spongyFan022@hr.nl',
+    metadata: { duration: '10h 59m' },
+    rating: 2,
+    ratingCount: 12,
+  },
 ];
 
 const resource_types = ['All', 'Video', 'Book', 'Article', 'Online Course']
 
 const ResourcesScreen = () => {
   const navigation = useNavigation();
+  const [filteredResources, setFilteredResources] = useState([]);
   const [selectedType, setSelectedType] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -33,21 +45,40 @@ const ResourcesScreen = () => {
     fetchResources();
   }, []);
 
+  useEffect(() => {
+    applyFilters();
+  }, [searchQuery, selectedType, resources]);
+
   const fetchResources = async () => {
     setIsLoading(true);
     await new Promise(res => setTimeout(res, 1000));
     setResources(DUMMY_RESOURCES);
     setIsLoading(false);
+    setRefreshing(false);
   };
 
-  const filteredResources = resources.filter(resource =>
-    resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    resource.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const applyFilters = () => {
+    let results = [...resources];
 
-  const handleResourcePress = (resource) => {
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      results = results.filter(resource =>
+        resource.title.toLowerCase().includes(query) ||
+        resource.description.toLowerCase().includes(query) ||
+          resource.tags.some(tag => tag.toLowerCase().includes(query))
+      );
+    }
 
-  };
+    if (selectedType !== 'All') {
+      results = results.filter(resource => resource.type === selectedType);
+    }
+    setFilteredResources(results);
+  }
+
+  const clearFilters = () => {
+    setSearchQuery('')
+    setSelectedType('All')
+  }
 
   const handleRefresh = () => {
       setRefreshing(true)
@@ -57,7 +88,7 @@ const ResourcesScreen = () => {
   const renderResourceItem = ({ item }) => (
       <TouchableOpacity
           style={styles.resourceItem}
-          onPress={() => navigation.navigate('ResourceDet', {resource:item})}
+
           >
           <View style={styles.resourceHead}>
               <Text style={styles.resourceTitle}>{item.title}</Text>
@@ -88,17 +119,27 @@ const ResourcesScreen = () => {
         )
     }
 
-  const renderEmpty = () => (
-    <View style={styles.center}>
-      <Ionicons name="document-text-outline" size={60} color="#ccc" />
-      <Text style={styles.emptyText}>Geen bronnen gevonden</Text>
-    </View>
-  );
-
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color="#666" style={styles.icon} />
+      <View style={styles.filterContain}>
+        <Text style={styles.filterTitle}>Zoek bronnen</Text>
+
+        <View style={styles.searchContain}>
+          <Ionicons name="seach" size={20} color="#666" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Zoek op titel, beschrijving of tags..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          {searchQuery ? (
+              <TouchableOpacity onPress={() => setSearchQuery('')}>
+                <Ionicons name="close-circle" size={20} color="#666" />
+              </TouchableOpacity>
+          ) : null}
+              )
+
+        <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           placeholder="Zoek naar bronnen..."
@@ -119,8 +160,17 @@ const ResourcesScreen = () => {
             renderItem={renderTypeItem}
             keyExtractor={item => item}
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 10 }}
+            contentContainerStyle={ styles.typesList }
         />
+
+        <TouchableOpacity style={styles.clearButton} onPress={clearFilters}>
+          <Text style={styles.clearButtonText}>Filteren wissen</Text>
+        </TouchableOpacity>
+      </View>
+
+        <Text style={styles.resultsText}>
+          toont {filteredResources.length} resultaten van {resources.length} bronnen
+        </Text>
 
 
         {filteredResources.length == 0 ? (
@@ -137,22 +187,38 @@ const ResourcesScreen = () => {
             style={styles.resourceList}
             contentContainerStyle={ styles.listCont }
             refreshControl={
-            <RefreshControl
+              <RefreshControl
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
                 colors={['#0066CC']}
-            />
+              />
             }
             />
-        )
-        }
+        )}
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f8f8f8' },
-  searchContainer: {
+  filterContain: {
+    backgroundColor: 'white',
+    margin: 15,
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  filterTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  searchContain: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
@@ -164,79 +230,107 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     elevation: 2,
   },
-  icon: { marginRight: 10 },
+  searchIcon: {
+        marginRight: 10,
+      },
   searchInput: { flex: 1, fontSize: 16, color: '#333' },
-  center: {
+  typesList: { paddingVertical: 10 },
+  listCont: { paddingBottom: 10 },
+  resourceList: { flex: 1 },
+  selectedTypeBlock: {
+    color: '#fff', fontWeight: '500'
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  emptyContain: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  emptyText: { fontSize: 16, color: '#666', marginTop: 10 },
-  list: { paddingHorizontal: 15, paddingBottom: 20 },
-    selectedTypeBlock: {
-      color: '#fff', fontWeight: '500'
+  loaderContain: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectedTypeText: {
+    color: '#fff', fontWeight: '500'
+  },
+  resourceHead: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  resourceItem: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 12,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
     },
-    selectedTypeText: {
-      color: '#fff', fontWeight: '500'
-    },
-    resourceHead: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    resourceItem: {
-      backgroundColor: 'white',
-        padding: 16,
-        borderRadius: 8,
-        marginBottom: 12,
-        elevation: 1,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-    },
-    resourceTitle: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      flex: 1,
-    },
-    resourceType: {
-      fontSize: 14,
-      color: '#666',
-        backgroundColor: '#000',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 4,
-        overflow: 'hidden',
-    },
-    resourceDescription: {
-      fontSize: 14,
-      color: '#666',
-      marginTop: 8,
-    },
-    resourceAuthor: {
-      fontSize: 14,
-      color: '#666',
-      marginTop: 8,
-    },
-    filterSub: {
-      fontSize: 14,
-      marginTop: 10,
-      marginBottom: 10,
-    },
-    typeBlock: {
-      paddingHorizontal: 10,
-      paddingVertical: 5,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 16,
-        marginRight: 8,
-        borderWidth: 1,
-        borderColor: '#eee',
-    },
-    typeText: {
-      fontSize: 14,
-      color: '#666',
-    },
+  resourceTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    flex: 1,
+  },
+  resourceType: {
+    fontSize: 14,
+    color: '#666',
+    backgroundColor: '#000',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  resourceDescription: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 8,
+  },
+  resourceAuthor: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 8,
+  },
+  filterSub: {
+    fontSize: 14,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  clearButton: {
+    backgroundColor: '#007bff',
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  clearButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  resultsText: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 10,
+  },
+  typeBlock: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 16,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  typeText: {
+    fontSize: 14,
+    color: '#666',
+  },
 });
 
 export default ResourcesScreen;
