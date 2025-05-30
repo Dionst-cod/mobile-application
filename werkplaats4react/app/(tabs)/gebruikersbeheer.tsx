@@ -26,6 +26,25 @@ const Gebruikersbeheer = () => {
         return matchSearch
     })
 
+    const UserCard = ({user}) => {
+        <View style={styles.userCard}>
+            <View style={styles.userHeader}>
+                <View style={styles.userAvatar}>
+                    <Text style={styles.userAvatarText}>
+                        {user.displayName[0]}
+                    </Text>
+                </View>
+                <View style={styles.userDetails}>
+                    <View style={styles.userNameRow}>
+                        <Text style={styles.userName}>{user.displayName}</Text>
+                    </View>
+                    <Text style={styles.userMail}>{user.email}</Text>
+                    <Text style={styles.userStudentNr}>{user.studentNumber}</Text>
+                </View>
+            </View>
+        </View>
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -49,7 +68,9 @@ const Gebruikersbeheer = () => {
                 </View>
 
                 <View style={styles.usersList}>
-
+                    {filteredUsers.map(user => (
+                        <UserCard key={user.id} />
+                    ))}
                 </View>
 
             </ScrollView>
@@ -105,6 +126,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
+    userCard: {
+        backgroundColor: 'white',
+        borderRadius: 8,
+        padding: 24,
+        marginBottom: 24,
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        elevation: 2,
+    }
 })
 
 export default Gebruikersbeheer;
