@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b0c1d9d-bd9a-4a6a-b3be-4028577f2229" name="Changes" comment="loading in the user">
-      <change afterPath="$PROJECT_DIR$/werkplaats4react/app/(tabs)/resourcedetails.tsx" afterDir="false" />
+    <list default="true" id="9b0c1d9d-bd9a-4a6a-b3be-4028577f2229" name="Changes" comment="ga beginnen met details van de resources">
+      <change afterPath="$PROJECT_DIR$/werkplaats4react/screens/resourceDetails.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/werkplaats4react/app/(tabs)/gebruikersbeheer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/werkplaats4react/app/(tabs)/gebruikersbeheer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/werkplaats4react/app/(tabs)/resourcedetails.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/werkplaats4react/app/(tabs)/resources.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/werkplaats4react/app/(tabs)/resources.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,8 +61,8 @@
       <recent name="C:\Users\justi\Documents\GitHub\wp4-2025-react-1e5-chickenjockeyfc\werkplaats4react\app\(tabs)" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\justi\Documents\GitHub\wp4-2025-react-1e5-chickenjockeyfc\werkplaats4react\app\(tabs)" />
       <recent name="C:\Users\justi\Documents\GitHub\wp4-2025-react-1e5-chickenjockeyfc\werkplaats4react\screens" />
+      <recent name="C:\Users\justi\Documents\GitHub\wp4-2025-react-1e5-chickenjockeyfc\werkplaats4react\app\(tabs)" />
       <recent name="C:\Users\justi\Documents\GitHub\wp4-2025-react-1e5-chickenjockeyfc" />
     </key>
   </component>
@@ -94,7 +95,8 @@
       <workItem from="1748176903478" duration="5715000" />
       <workItem from="1748265602602" duration="7307000" />
       <workItem from="1748540628416" duration="1776000" />
-      <workItem from="1748605055872" duration="9193000" />
+      <workItem from="1748605055872" duration="11289000" />
+      <workItem from="1748690348996" duration="4817000" />
     </task>
     <task id="LOCAL-00001" summary="began working properly on the resources/homepage web">
       <option name="closed" value="true" />
@@ -152,7 +154,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748622053737</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="ga beginnen met details van de resources">
+      <option name="closed" value="true" />
+      <created>1748639930238</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1748639930238</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -178,6 +188,7 @@
     <MESSAGE value="have to add abl to see email, displayname etc on the page" />
     <MESSAGE value="changed it to gebruikersbeheer.&#10;adding filter clearly soon&#10;searchbar&#10;usercard for users soon to see users" />
     <MESSAGE value="loading in the user" />
-    <option name="LAST_COMMIT_MESSAGE" value="loading in the user" />
+    <MESSAGE value="ga beginnen met details van de resources" />
+    <option name="LAST_COMMIT_MESSAGE" value="ga beginnen met details van de resources" />
   </component>
 </project>

@@ -88,7 +88,7 @@ const ResourcesScreen = () => {
   const renderResourceItem = ({ item }) => (
       <TouchableOpacity
           style={styles.resourceItem}
-
+          onPress={() => navigation.navigate('resourceDetails', { resource: item })}
           >
           <View style={styles.resourceHead}>
               <Text style={styles.resourceTitle}>{item.title}</Text>
