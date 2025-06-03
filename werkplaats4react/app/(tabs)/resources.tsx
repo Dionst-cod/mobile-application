@@ -88,7 +88,7 @@ const ResourcesScreen = () => {
   const renderResourceItem = ({ item }) => (
       <TouchableOpacity
           style={styles.resourceItem}
-
+          onPress={() => navigation.navigate('resourceDetails', { resource: item })}
           >
           <View style={styles.resourceHead}>
               <Text style={styles.resourceTitle}>{item.title}</Text>
@@ -125,7 +125,7 @@ const ResourcesScreen = () => {
         <Text style={styles.filterTitle}>Zoek bronnen</Text>
 
         <View style={styles.searchContain}>
-          <Ionicons name="seach" size={20} color="#666" style={styles.searchIcon} />
+          <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Zoek op titel, beschrijving of tags..."
