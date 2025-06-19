@@ -1,10 +1,10 @@
-const { generateToken } = require("../utils/jwt");
-const express = require("express");
-const router = express.Router();
-const bcrypt = require("bcrypt");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+import express from "express";
+import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken";
+import { generateToken } from "../utils/jwt.js";
 
+const router = express.Router();
+const prisma = new PrismaClient();
 
 const EMAIL_DOMAIN = "@hr.nl";
 
@@ -29,22 +29,22 @@ router.post("/register", async (req, res) => {
     return res.status(409).json({ message: "Email already registered." });
   }
 
-  const hashed = await bcrypt.hash(password, 10);
-
   const user = await prisma.user.create({
-    data: {
-      email,
-      passwordHash: hashed,
-      displayName: displayName || email.split("@")[0],
+  data: {
+    email,
+    passwordHash: password, 
+    displayName: displayName || email.split("@")[0],
     },
   });
 
-  return res.status(201).json({ message: "User registered successfully", user: { id: user.id, email: user.email } });
+
+  return res.status(201).json({
+    message: "User registered successfully",
+    user: { id: user.id, email: user.email },
+  });
 });
 
-
-const jwt = require("jsonwebtoken");
-
+// LOGIN route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -62,8 +62,7 @@ router.post("/login", async (req, res) => {
     return res.status(403).json({ message: "User is banned." });
   }
 
-  const valid = await bcrypt.compare(password, user.passwordHash);
-  if (!valid) {
+ if (user.passwordHash !== password) {
     return res.status(401).json({ message: "Invalid password." });
   }
 
@@ -76,10 +75,9 @@ router.post("/login", async (req, res) => {
       id: user.id,
       email: user.email,
       displayName: user.displayName,
-      isAdmin: user.isAdmin
-    }
+      isAdmin: user.isAdmin,
+    },
   });
 });
 
-module.exports = router;
-
+export default router;
