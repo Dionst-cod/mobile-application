@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  displayName  String
+  isAdmin      Boolean  @default(false)
+  isBanned     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  resources Resource[]
+  ratings   Rating[]
+  favorites Favorite[]
+}
+
+model Resource {
+  id          String   @id @default(uuid())
+  title       String
+  url         String
+  description String
+  type        String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+
+  // Add these back-relations:
+  ratings      Rating[] // ← add this
+  favorites    Favorite[] // ← add this
+  resourceTags ResourceTag[] // ← add this
+
+  tags Tag[] @relation("ResourceTags") // many-to-many via inline relation
+}
+
+model Rating {
+  id         String   @id @default(uuid())
+  score      Int
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  resource   Resource @relation(fields: [resourceId], references: [id])
+  resourceId String
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, resourceId]) // zorgt dat een gebruiker slechts één rating mag geven per bron
+}
+
+
+model Favorite {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  resource   Resource @relation(fields: [resourceId], references: [id])
+  resourceId String
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, resourceId]) // één favoriet per user-resource
+}
+
+
+model Tag {
+  id           String        @id @default(uuid())
+  name         String        @unique
+  createdAt    DateTime      @default(now())
+  resources    Resource[]    @relation("ResourceTags") // ← already present
+  resourceTags ResourceTag[] // ← add this
+}
+
+model ResourceTag {
+  id         String   @id @default(uuid())
+  resource   Resource @relation(fields: [resourceId], references: [id])
+  resourceId String
+  tag        Tag      @relation(fields: [tagId], references: [id])
+  tagId      String
+
+  @@unique([resourceId, tagId])
+}
+
+model Ban {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  reason    String?
+  createdAt DateTime @default(now())
+}
+
+enum ResourceType {
+  video
+  book
+  article
+  course
+}
