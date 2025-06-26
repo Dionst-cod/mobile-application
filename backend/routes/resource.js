@@ -54,7 +54,6 @@ router.get("/", authenticateToken, async (req, res) => {
       resourceTags: undefined, 
     }));
 
-    res.json(formatted);
   } catch (error) {
     console.error("Error fetching resources:", error);
     res.status(500).json({ error: "Failed to fetch resources" });
@@ -62,22 +61,24 @@ router.get("/", authenticateToken, async (req, res) => {
 });
 
 
-router.post("/resources", authenticateToken, async (req, res) => {
-  const { title, url, description } = req.body;
+router.post("/", authenticateToken, async (req, res) => {
+  console.log("Ontvangen body:", req.body);
+
+  const { title, url, description, type } = req.body;
 
   const resource = await prisma.resource.create({
     data: {
       title,
       url,
       description,
+      type,
       user: { connect: { id: req.user.id } }
     }
   });
-
   res.status(201).json({ message: "Resource created", resource });
 });
 
-router.post("/resources/:resourceId/tags", authenticateToken, async (req, res) => {
+router.post("/:resourceId/tags", authenticateToken, async (req, res) => {
   const { resourceId } = req.params;
   let { tagIds } = req.body;
   tagIds = [...new Set(tagIds)]; 
@@ -113,36 +114,49 @@ router.post("/resources/:resourceId/tags", authenticateToken, async (req, res) =
   }
 });
 
-router.post("/:resourceId/rate", authenticateToken, async (req, res) => {
+router.post('/:resourceId/rate', authenticateToken, async (req, res) => {
+  console.log('🎯 Bereikt:', req.params.resourceId);
+  console.log('🧑‍🦱 Gebruiker:', req.user); 
   const { resourceId } = req.params;
   const { score } = req.body;
 
-  if (!score || score < 1 || score > 5) {
-    return res.status(400).json({ error: "Score must be between 1 and 5." });
+  try {
+    const existingRating = await prisma.rating.findFirst({
+    where: {
+      userId: req.user.id,
+      resourceId: resourceId
+    }
+  });
+
+  let rating;
+
+  if (existingRating) {
+    rating = await prisma.rating.update({
+      where: {
+        id: existingRating.id
+      },
+      data: {
+        score: parseInt(score)
+      }
+    });
+  } else {
+    rating = await prisma.rating.create({
+      data: {
+        score: parseInt(score),
+        resource: { connect: { id: resourceId } },
+        user: { connect: { id: req.user.id } }
+      }
+    });
   }
 
-  try {
-    const rating = await prisma.rating.upsert({
-      where: {
-        userId_resourceId: {
-          userId: req.user.id,
-          resourceId,
-        },
-      },
-      update: { score },
-      create: {
-        userId: req.user.id,
-        resourceId,
-        score,
-      },
-    });
+  res.json(rating);
 
-    res.status(200).json({ message: "Rating saved", rating });
   } catch (error) {
-    console.error("Error saving rating:", error);
-    res.status(500).json({ error: "Failed to save rating" });
+    console.error('Fout bij opslaan rating:', error);
+    res.status(500).json({ error: 'Interne fout bij opslaan rating' });
   }
 });
+
 
 router.post("/:resourceId/favorite", authenticateToken, async (req, res) => {
   const { resourceId } = req.params;
@@ -188,6 +202,16 @@ router.delete("/:resourceId/favorite", authenticateToken, async (req, res) => {
     res.status(500).json({ error: "Failed to remove favorite" });
   }
 });
+
+router.get("/favorites", authenticateToken, async (req, res) => {
+  const favorites = await prisma.favorite.findMany({
+    where: { userId: req.user.id },
+    include: { resource: true },
+  });
+
+  res.json(favorites.map((fav) => fav.resourceId));
+});
+
 
 router.delete("/:id", authenticateToken, isAdmin, async (req, res) => {
   const { id } = req.params;

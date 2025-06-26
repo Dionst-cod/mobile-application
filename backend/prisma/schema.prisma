@@ -27,17 +27,15 @@ model Resource {
   title       String
   url         String
   description String
-  type        String
-  createdAt   DateTime @default(now())
+  type        String       // ✅ toegevoegd
   user        User     @relation(fields: [userId], references: [id])
   userId      String
+  createdAt   DateTime @default(now())
 
-  // Add these back-relations:
-  ratings      Rating[] // ← add this
-  favorites    Favorite[] // ← add this
-  resourceTags ResourceTag[] // ← add this
-
-  tags Tag[] @relation("ResourceTags") // many-to-many via inline relation
+  ratings       Rating[]
+  favorites     Favorite[]
+  resourceTags  ResourceTag[]
+  tags          Tag[] @relation("ResourceTags")
 }
 
 model Rating {
@@ -49,7 +47,7 @@ model Rating {
   resourceId String
   createdAt  DateTime @default(now())
 
-  @@unique([userId, resourceId]) // zorgt dat een gebruiker slechts één rating mag geven per bron
+  @@unique([userId, resourceId]) 
 }
 
 

@@ -15,8 +15,10 @@ router.post("/register", async (req, res) => {
     return res.status(400).json({ message: "Email and password are required." });
   }
 
-  if (!email.endsWith(EMAIL_DOMAIN)) {
-    return res.status(403).json({ message: "Only @hr.nl emails are allowed." });
+  const hrEmailRegex = /^[a-zA-Z0-9._%+-]+@hr\.nl$/;
+
+  if (!hrEmailRegex.test(email)) {
+    return res.status(403).json({ message: "Only valid @hr.nl email addresses are allowed." });
   }
 
   const banned = await prisma.ban.findUnique({ where: { email } });
@@ -44,7 +46,6 @@ router.post("/register", async (req, res) => {
   });
 });
 
-// LOGIN route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
