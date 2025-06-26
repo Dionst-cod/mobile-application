@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Racademic — Schoolproject 2025
 
 Een mobiele applicatie (React Native) met backend (Node.js + Prisma + SQLite) voor het beheren, delen en beoordelen van leerbronnen.
@@ -105,3 +106,6 @@ De volgende bestanden en mappen zijn **uitgesloten** via `.gitignore` en `.docke
 Zorg ervoor dat deze bestanden aanwezig zijn bij lokaal draaien of deployment, ook al staan ze niet in de repository.
 
 ## Bedankt voor het bekijken!
+=======
+
+>>>>>>> a34af8ff975e5692a27933df4778324d0c227e1f
