@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-# README.md – _RACademic Backend_
+# _RACademic Backend_
 
 ## Over dit project
 
@@ -112,6 +111,3 @@ De volgende bestanden en mappen zijn **uitgesloten** via `.gitignore` en `.docke
 - `build/` of `dist/` mappen (indien van toepassing)
 
 Zorg ervoor dat deze bestanden aanwezig zijn bij lokaal draaien of deployment, ook al staan ze niet in de repository.
-=======
-
->>>>>>> a34af8ff975e5692a27933df4778324d0c227e1f
